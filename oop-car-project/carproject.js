@@ -33,7 +33,7 @@ class Motorcycle extends Vehicle {
         return 2;
     }
     revEngine() {
-        return "VROOM!!!"
+        return "VROOM!!!";
     }
 }
 
