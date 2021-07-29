@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ user.full_name }}{% endblock %}}
+{% block title %}{{ user.full_name }}{% endblock %}
 
 {% block content %}
 
@@ -8,9 +8,7 @@
 
   {% if user.image_url %}
   <div class="col-sm-2 col-6">
-    <img src="{{ user.image_url }}"
-         alt="{{ user.full_name }}"
-         class="img-fluid">
+    <img src="{{ user.image_url }}" alt="{{ user.full_name }}" class="img-fluid">
   </div>
   {% endif %}
 
@@ -18,15 +16,24 @@
     <h1>{{ user.full_name }}</h1>
 
     <form>
-      <button class="btn btn-primary btn-sm"
-              formaction="/users/{{ user.id }}/edit"
-              formmethod="GET">Edit
+      <button class="btn btn-primary btn-sm" formaction="/users/{{ user.id }}/edit" formmethod="GET">Edit
       </button>
-      <button class="btn btn-danger btn-sm"
-              formaction="/users/{{ user.id }}/delete"
-              formmethod="POST">Delete
+      <button class="btn btn-danger btn-sm" formaction="/users/{{ user.id }}/delete" formmethod="POST">Delete
       </button>
     </form>
+
+    <h2 class="mt-4">Posts</h2>
+
+    <ul>
+      {% for post in user.posts %}
+      <li>
+        <a href="/posts/{{ post.id}}">{{ post.title }}</a>
+        <small>{{ post.friendly_date }}</small>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <p><a href="/users/{{ user.id }}/posts/new" class="btn btn-primary">Add Post</a></p>
 
   </div>
 </div>
