@@ -122,7 +122,7 @@ def posts_new(user_id):
     user = User.query.get_or_404(user_id)
     new_post = Post(title=request.form['title'],
                     content=request.form['content'],
-                    user=user)
+                    user_id=user_id)
 
     db.session.add(new_post)
     db.session.commit()
