@@ -5,7 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+def connect_db(app):
+    "Connect DB to Flask App. Call it in Flask App."
+
+    db.app = app
+    db.init_app(app)
+
+
 DEFAULT_IMAGE_URL = "https://www.freeiconspng.com/uploads/colored-smoke-png-photo-16.png"
+
 
 class User(db.Model):
     """Blogger/User"""
@@ -41,8 +49,21 @@ class Post(db.Model):
         return self.created_at.strftime("%a %b %-d %Y, %-I:%M %p")
 
 
-def connect_db(app):
-    "Connect DB to Flask App. Call it in Flask App."
+class PostTag(db.Model):
+    """Tag on a post."""
 
-    db.app = app
-    db.init_app(app)
+    __tablename__ = "posts_tags"
+
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True)
+
+
+class Tag(db.Model):
+    """Tag that can be added to posts."""
+
+    __tablename__ = 'tags'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text, nullable=False, unique=True)
+
+    posts = db.relationship('Post', secondary="posts_tags", cascade="all,delete", backref="tags") 
