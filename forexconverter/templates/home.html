@@ -3,6 +3,14 @@
 {% block content %}
 
 <h1>Forex Converter</h1>
+{% for msg in get_flashed_messages() %}
+<div class="alert alert-danger" role="alert">
+    <h3>{{msg}}</h3>
+</div>
+{% endfor %}
+<div class="alert alert-danger d-none" role="alert">
+    Not a valid amount.
+</div>
 <form action="/result" method="POST">
     <div class="form-group">
         <label for="forex_from">Converting from</label>
