@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../../Exercises/apis-tvmaze"
+		},
+		{
+			"path": "../../../Exercises/ajax-giphy-party"
+		},
+		{
+			"path": "../../../Projects/Connect Four"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "jeopardy"
+	}
+}

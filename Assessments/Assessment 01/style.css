@@ -1,0 +1,57 @@
+body {
+    background-color: rgb(78, 10, 10);
+}
+
+h1, h2 {
+    color: rgb(206, 198, 153);
+    text-align: center;
+}
+
+form {
+    display:flex
+    
+}
+
+
+p {
+    color: rgb(228, 224, 203);
+}
+
+.meme-container {
+	position: relative;
+    text-align: center;
+    
+
+}
+
+
+.meme-container:hover {
+    background: gray;
+    
+}
+
+
+.meme-toptext {
+    font-family: Arial;
+    font-size: 70px;
+    font-weight: bolder;
+    color: white;
+    -webkit-text-stroke: 4px black;
+	position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.meme-bottomtext {
+    font-family: Arial;
+    font-size: 70px;
+    font-weight: bolder;
+    color: white;
+    -webkit-text-stroke: 4px black;
+	position: absolute;
+    left: 50%;
+    bottom: 1%;
+    transform: translate(-50%, 0%);
+}
+
+
