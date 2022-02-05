@@ -1,0 +1,79 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "isbn",
+    "author",
+    "language",
+    "pages",
+    "title",
+    "year"
+  ],
+  "properties": {
+    "amazon-url": {
+      "$id": "#/properties/amazon-url",
+      "type": "string",
+      "title": "The Amazon-url Schema",
+      "default": "",
+      "examples": ["http://a.co/eobPtX2"],
+      "pattern": "^(.*)$"
+    },
+    "author": {
+      "$id": "#/properties/author",
+      "type": "string",
+      "title": "The Author Schema",
+      "default": "",
+      "examples": ["Matthew Lane"],
+      "pattern": "^(.*)$"
+    },
+    "isbn": {
+      "$id": "#/properties/isbn-10",
+      "type": "string",
+      "title": "The Isbn-10 Schema",
+      "default": "",
+      "examples": ["0691161518"],
+      "pattern": "^(.*)$"
+    },
+    "language": {
+      "$id": "#/properties/language",
+      "type": "string",
+      "title": "The Language Schema",
+      "default": "",
+      "examples": ["english"],
+      "pattern": "^(.*)$"
+    },
+    "pages": {
+      "$id": "#/properties/pages",
+      "type": "number",
+      "title": "The Pages Schema",
+      "default": 0,
+      "examples": [264]
+    },
+    "publisher": {
+      "$id": "#/properties/publisher",
+      "type": "string",
+      "title": "The Publisher Schema",
+      "default": "",
+      "examples": ["Princeton University Press"],
+      "pattern": "^(.*)$"
+    },
+    "title": {
+      "$id": "#/properties/title",
+      "type": "string",
+      "title": "The Title Schema",
+      "default": "",
+      "examples": ["Power-Up: Unlocking the Hidden Mathematics in Video Games"],
+      "pattern": "^(.*)$"
+    },
+    "year": {
+      "$id": "#/properties/year",
+      "type": "number",
+      "title": "The Year Schema",
+      "default": 0,
+      "examples": [2017]
+    }
+  }
+}
