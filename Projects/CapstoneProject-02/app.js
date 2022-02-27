@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const ExpressError = require("./expressError");
+const { authenticateJWT } = require("./middleware/auth");
 const path = require("path");
 const secret = require("./secret");
 const redirect_uri = "http://localhost:8888/callback";
@@ -10,6 +12,35 @@ const SpotifyWebApi = require("spotify-web-api-node");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(authenticateJWT);
+
+const uRoutes = require("./routes/users");
+const aRoutes = require("./routes/auth");
+app.use("/users", uRoutes);
+app.use("/auth", aRoutes);
+
+// 404 handler
+// app.use(function (req, res, next) {
+//   const err = new ExpressError("Not Found", 404);
+
+//   // pass err to next middleware
+//   return next(err);
+// });
+
+// general error handler
+app.use(function (err, req, res, next) {
+  // the default status is 500 Internal Server Error
+  let status = err.status || 500;
+
+  // set the status and alert the user
+  return res.status(status).json({
+    error: {
+      message: err.message,
+      status: status,
+    },
+  });
+});
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
@@ -83,4 +114,4 @@ app.get("/recent", function (req, res) {
     );
 });
 
-app.listen(8888, () => console.log("Server started on port 8888"));
+module.exports = app;
