@@ -14,10 +14,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(authenticateJWT);
 
-const uRoutes = require("./routes/users");
-const aRoutes = require("./routes/auth");
-app.use("/users", uRoutes);
-app.use("/auth", aRoutes);
+// const uRoutes = require("./routes/users");
+// const aRoutes = require("./routes/auth");
+app.use("/users", require("./routes/users"));
+app.use("/auth", require("./routes/auth"));
 
 // 404 handler
 // app.use(function (req, res, next) {
