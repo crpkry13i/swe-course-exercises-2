@@ -12,7 +12,7 @@ const SpotifyWebApi = require("spotify-web-api-node");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(authenticateJWT);
+// app.use(authenticateJWT);
 
 // const uRoutes = require("./routes/users");
 // const aRoutes = require("./routes/auth");

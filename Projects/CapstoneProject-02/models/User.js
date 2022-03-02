@@ -64,6 +64,43 @@ class User {
       throw new expressError(err);
     }
   }
+  static async authenticate(username, password) {
+    try {
+      const results = await db.query(`SELECT * FROM users WHERE username=$1`, [
+        username,
+      ]);
+      if (results.rows.length === 0) {
+        throw new expressError(
+          `User with username ${username} does not exist`,
+          404
+        );
+      }
+      const user = new User(
+        results.rows[0].id,
+        results.rows[0].username,
+        results.rows[0].password
+      );
+      const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) {
+        throw new expressError("Invalid password", 401);
+      }
+      return user;
+    } catch (err) {
+      throw new expressError(err);
+    }
+  }
+  static async register(newUsername, newPassword) {
+    try {
+      const results = await db.query(
+        `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING username, password`,
+        [newUsername, newPassword]
+      );
+      const { id, username, password } = results.rows[0];
+      return new User(id, username, password);
+    } catch (err) {
+      throw new expressError(err);
+    }
+  }
 }
 
 module.exports = User;
