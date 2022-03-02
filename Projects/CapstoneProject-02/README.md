@@ -3,7 +3,7 @@
 Note: This is a Node.js and Express.js application that uses the Spotify Web API, along with Spotify Web API Node Wrapper, to get the current user's recently played tracks.
 
 Required credentials: Client ID, Client Secret.
-You can get these from [Spotify](https://developer.spotify.com/dashboard/applications).
+You can get these from [Spotify for Developers](https://developer.spotify.com/dashboard/applications).
 
 To get this application running, make sure you do the following in the Terminal:
 `npm install`
