@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const session = require("express-session");
+const flash = require("connect-flash");
 const ExpressError = require("./expressError");
 const { authenticateJWT, ensureLoggedIn } = require("./middleware/auth");
 const path = require("path");
@@ -9,7 +11,16 @@ const SpotifyWebApi = require("spotify-web-api-node");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({ secret: "secret", resave: false, saveUninitialized: false }));
+app.use(flash());
 // app.use(authenticateJWT);
+
+// flash messages middleware
+app.use((req, res, next) => {
+  res.locals.messages = req.flash("success");
+  res.locals.errors = req.flash("error");
+  next();
+});
 
 // const uRoutes = require("./routes/users");
 // const aRoutes = require("./routes/auth");
@@ -63,6 +74,7 @@ let spotifyApi = new SpotifyWebApi({
 
 // Request Access Token
 app.get("/callback", function (req, res) {
+  // your application requests refresh and access tokens
   code = req.query.code || null;
   state = req.query.state || null;
   spotifyApi.authorizationCodeGrant(code).then(
@@ -74,6 +86,7 @@ app.get("/callback", function (req, res) {
       // Set the access token on the API object to use it in later calls
       spotifyApi.setAccessToken(data.body["access_token"]);
       spotifyApi.setRefreshToken(data.body["refresh_token"]);
+      req.flash("success", `Successfully logged in!`);
       return res.redirect("/recent");
     },
     function (err) {
@@ -85,23 +98,25 @@ app.get("/callback", function (req, res) {
 app.get("/recent", function (req, res) {
   // redirect to login if no token
   if (!spotifyApi.getAccessToken()) {
+    req.flash("error", "You must login first");
     return res.redirect("/login");
+  } else {
+    // Get Current User's Recently Played Tracks
+    spotifyApi
+      .getMyRecentlyPlayedTracks({
+        limit: 20,
+      })
+      .then(
+        function (data) {
+          // Output items
+          let items = data.body.items;
+          return res.render("index", { items });
+        },
+        function (err) {
+          console.log("Something went wrong!", err);
+        }
+      );
   }
-  // Get Current User's Recently Played Tracks
-  spotifyApi
-    .getMyRecentlyPlayedTracks({
-      limit: 20,
-    })
-    .then(
-      function (data) {
-        // Output items
-        let items = data.body.items;
-        return res.render("index", { items });
-      },
-      function (err) {
-        console.log("Something went wrong!", err);
-      }
-    );
 });
 
 module.exports = app;

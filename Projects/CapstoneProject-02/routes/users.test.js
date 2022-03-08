@@ -33,21 +33,21 @@ describe("GET /users/:id", () => {
   });
 });
 
-describe("POST /users", () => {
-  test("Creates a single user", async () => {
-    const res = await request(app)
-      .post("/users")
-      .send({ username: "guitarlover89", password: "ilovemusic" });
-    expect(res.statusCode).toBe(201);
-    expect(res.body).toEqual({
-      user: {
-        id: expect.any(Number),
-        username: "guitarlover89",
-        password: "ilovemusic",
-      },
-    });
-  });
-});
+// describe("POST /users", () => {
+//   test("Creates a single user", async () => {
+//     const res = await request(app)
+//       .post("/users")
+//       .send({ username: "guitarlover89", password: "ilovemusic" });
+//     expect(res.statusCode).toBe(201);
+//     expect(res.body).toEqual({
+//       user: {
+//         id: expect.any(Number),
+//         username: "guitarlover89",
+//         password: "ilovemusic",
+//       },
+//     });
+//   });
+// });
 
 describe("PATCH /users/:id", () => {
   test("Updates a single user", async () => {

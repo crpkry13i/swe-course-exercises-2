@@ -7,7 +7,7 @@ const User = require("../models/User");
 router.get("/", async (req, res, next) => {
   try {
     let users = await User.getAll();
-    return res.json(users);
+    return res.json({ users: users });
   } catch (err) {
     return next(err);
   }
@@ -17,7 +17,7 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     let user = await User.getById(req.params.id);
-    return res.json(user);
+    return res.json({ user: user });
   } catch (err) {
     return next(err);
   }
@@ -28,7 +28,7 @@ router.post("/", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const newUser = await User.register(username, password);
-    return res.status(201).json(newUser);
+    return res.status(201).json({ user: newUser });
   } catch (err) {
     return next(err);
   }
@@ -39,7 +39,7 @@ router.patch("/:id", async (req, res, next) => {
   try {
     let user = await User.getById(req.params.id);
     await User.save();
-    return res.json(user);
+    return res.json({ user: user });
   } catch (err) {
     return next(err);
   }

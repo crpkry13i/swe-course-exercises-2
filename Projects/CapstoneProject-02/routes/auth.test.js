@@ -14,10 +14,12 @@ let testUserToken;
 
 beforeEach(async () => {
   const hashedPassword = await bcrypt.hash("password", BCRYPT_WORK_FACTOR);
-  await db.query(`INSERT INTO users VALUES ('test', $1)`, [hashedPassword]);
+  await db.query(
+    `INSERT INTO users (username, password) VALUES ('testuser', '${hashedPassword}')`
+  );
 
   // create a test user token
-  const payload = { username: "test" }; // payload is the user object
+  const payload = { username: "testuser" }; // payload is the user object
   testUserToken = jwt.sign(payload, SECRET_KEY);
 });
 
@@ -26,9 +28,9 @@ describe("POST /register", () => {
   test("returns {username}", async () => {
     const response = await request(app)
       .post("/register")
-      .send({ username: "test", password: "password" });
+      .send({ username: "testuser", password: "password" });
     expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({ username: "test" });
+    expect(response.body).toEqual({ username: "testuser" });
   });
 });
 
@@ -37,7 +39,7 @@ describe("POST /login", () => {
   test("returns logged in msg", async () => {
     const response = await request(app)
       .post("/login")
-      .send({ username: "test", password: "password" });
+      .send({ username: "testuser", password: "password" });
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual(
       expect.objectContaining({ token: expect.any(String) })
@@ -47,7 +49,7 @@ describe("POST /login", () => {
   test("fails with wrong password", async () => {
     const response = await request(app)
       .post("/login")
-      .send({ username: "test", password: "wrong" });
+      .send({ username: "testuser", password: "wrong" });
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({ error: "Invalid username/password" });
   });
@@ -55,5 +57,5 @@ describe("POST /login", () => {
 
 afterEach(async () => {
   //delete any data created by test
-  await db.query(`DELETE FROM users WHERE username = 'test'`);
+  await db.query(`DELETE FROM users WHERE username = 'testuser'`);
 });
