@@ -3,11 +3,8 @@ const app = express();
 const ExpressError = require("./expressError");
 const { authenticateJWT } = require("./middleware/auth");
 const path = require("path");
-const secret = require("./secret");
+const { client_id, client_secret } = require("./secret");
 const redirect_uri = "http://localhost:8888/callback";
-const client_id = secret.client_id;
-const client_secret = secret.client_secret;
-const querystring = require("querystring");
 const SpotifyWebApi = require("spotify-web-api-node");
 
 app.use(express.json());
@@ -44,10 +41,6 @@ app.use(function (err, req, res, next) {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
-let state = "abc123";
-let scope =
-  "user-read-private user-read-email user-read-recently-played user-top-read";
-
 // credentials are optional
 let spotifyApi = new SpotifyWebApi({
   clientId: client_id,
@@ -55,18 +48,17 @@ let spotifyApi = new SpotifyWebApi({
   redirectUri: redirect_uri,
 });
 
+app.get("/", (req, res) => {
+  res.send("APP IS RUNNING");
+});
+
 // Request User Authorization
 app.get("/login", function (req, res) {
-  res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      })
-  );
+  return res.render("login");
+});
+
+app.get("/register", function (req, res) {
+  return res.render("register");
 });
 
 // Request Access Token
@@ -91,10 +83,8 @@ app.get("/callback", function (req, res) {
 });
 
 app.get("/recent", function (req, res) {
-  if (
-    spotifyApi.getAccessToken() === "" ||
-    spotifyApi.getAccessToken() === undefined
-  ) {
+  // redirect to login if no token
+  if (!spotifyApi.getAccessToken()) {
     return res.redirect("/login");
   }
   // Get Current User's Recently Played Tracks

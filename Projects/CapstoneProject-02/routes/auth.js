@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const ExpressError = require("../expressError");
-const db = require("../db");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { BCRYPT_WORK_FACTOR, SECRET_KEY } = require("../config");
-const { authenticateJWT, ensureLoggedIn } = require("../middleware/auth");
+//const jwt = require("jsonwebtoken");
+// const { authenticateJWT, ensureLoggedIn } = require("../middleware/auth");
+const { BCRYPT_WORK_FACTOR, redirect_uri, state, scope } = require("../config");
 const User = require("../models/User");
+const querystring = require("querystring");
+const { client_id } = require("../secret");
 
 router.get("/", (req, res, next) => {
-  res.send("APP IS WORKING!!!");
+  res.send("Welcome to the auth route");
 });
 
 router.post("/register", async (req, res, next) => {
@@ -44,7 +45,17 @@ router.post("/login", async (req, res, next) => {
     } else {
       // authenticate user
       const user = await User.authenticate(username, password);
-      return res.json({ message: `${user.username} logged in` });
+      //res.json({ message: `${user.username} logged in` });
+      res.redirect(
+        "https://accounts.spotify.com/authorize?" +
+          querystring.stringify({
+            response_type: "code",
+            client_id: client_id,
+            scope: scope,
+            redirect_uri: redirect_uri,
+            state: state,
+          })
+      );
     }
   } catch (err) {
     return next(err);
