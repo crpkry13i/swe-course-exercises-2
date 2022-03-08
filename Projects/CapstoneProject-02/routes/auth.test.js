@@ -53,31 +53,6 @@ describe("POST /login", () => {
   });
 });
 
-// GET /topsecret - returns secret message
-describe("GET /topsecret", () => {
-  test("returns 'Made it'", async () => {
-    const response = await request(app)
-      .get("/topsecret")
-      .send({ _token: testUserToken });
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({ message: "Made it" });
-  });
-
-  test("returns 401 when logged out", async () => {
-    const response = await request(app).get("/topsecret"); // no token in body
-    expect(response.statusCode).toBe(401);
-    expect(response.body).toEqual({ error: "UNAUTHORIZED" });
-  });
-
-  test("returns 401 when token is invalid", async () => {
-    const response = await request(app)
-      .get("/topsecret")
-      .send({ _token: "invalid" }); // invalid token
-    expect(response.statusCode).toBe(401);
-    expect(response.body).toEqual({ error: "UNAUTHORIZED" });
-  });
-});
-
 afterEach(async () => {
   //delete any data created by test
   await db.query(`DELETE FROM users WHERE username = 'test'`);

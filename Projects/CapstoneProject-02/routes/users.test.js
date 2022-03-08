@@ -13,16 +13,6 @@ beforeEach(async () => {
   testUser = result.rows[0];
 });
 
-afterEach(async () => {
-  // delete any users created in the test
-  await db.query("DELETE FROM users");
-});
-
-afterAll(async () => {
-  // close db connection
-  await db.end();
-});
-
 describe("GET /users", () => {
   test("Get a list with one user", async () => {
     const res = await request(app).get("/users");
@@ -89,4 +79,14 @@ describe("DELETE /users/:id", () => {
     const res = await request(app).patch(`/users/0`); // id of a non-existent user
     expect(res.statusCode).toBe(404);
   });
+});
+
+afterEach(async () => {
+  // delete any users created in the test
+  await db.query("DELETE FROM users");
+});
+
+afterAll(async () => {
+  // close db connection
+  await db.end();
 });

@@ -35,18 +35,6 @@ class User {
       throw new expressError(err);
     }
   }
-  static async create(newUsername, newPassword) {
-    try {
-      const results = await db.query(
-        `INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *`,
-        [newUsername, newPassword]
-      );
-      const { username, password } = results.rows[0];
-      return new User(username, password);
-    } catch (err) {
-      throw new expressError(err);
-    }
-  }
   async delete() {
     try {
       await db.query(`DELETE FROM users WHERE id=$1`, [this.id]);

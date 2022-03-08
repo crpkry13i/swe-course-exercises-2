@@ -27,7 +27,7 @@ router.get("/:id", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const newUser = await User.create(username, password);
+    const newUser = await User.register(username, password);
     return res.status(201).json(newUser);
   } catch (err) {
     return next(err);

@@ -1,10 +1,10 @@
 const express = require("express");
 const app = express();
 const ExpressError = require("./expressError");
-const { authenticateJWT } = require("./middleware/auth");
+const { authenticateJWT, ensureLoggedIn } = require("./middleware/auth");
 const path = require("path");
 const { client_id, client_secret } = require("./secret");
-const redirect_uri = "http://localhost:8888/callback";
+const { redirect_uri } = require("./config");
 const SpotifyWebApi = require("spotify-web-api-node");
 
 app.use(express.json());
@@ -41,13 +41,6 @@ app.use(function (err, req, res, next) {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
-// credentials are optional
-let spotifyApi = new SpotifyWebApi({
-  clientId: client_id,
-  clientSecret: client_secret,
-  redirectUri: redirect_uri,
-});
-
 app.get("/", (req, res) => {
   res.send("APP IS RUNNING");
 });
@@ -59,6 +52,13 @@ app.get("/login", function (req, res) {
 
 app.get("/register", function (req, res) {
   return res.render("register");
+});
+
+// credentials are optional
+let spotifyApi = new SpotifyWebApi({
+  clientId: client_id,
+  clientSecret: client_secret,
+  redirectUri: redirect_uri,
 });
 
 // Request Access Token
