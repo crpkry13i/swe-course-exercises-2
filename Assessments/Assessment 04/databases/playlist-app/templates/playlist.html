@@ -12,6 +12,11 @@
 
 <div class="text-danger">
   SHOW ALL OF THE SONGS IN THIS PLAYLIST HERE
+    <ul>
+    {% for song in playlist.songs %}
+    <li><a href="/songs/{{song.id}}">{{song.title}}</a></li>
+    {% endfor %}
+  </ul>
 </div>
 
 <p>

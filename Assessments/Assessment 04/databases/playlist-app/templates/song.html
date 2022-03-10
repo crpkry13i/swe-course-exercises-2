@@ -9,6 +9,11 @@
 
 <ul>
   DISPLAY ALL OF THE PLAYLISTS THAT THIS SONG IS A PART OF
+    <ul>
+    {% for playlist in song.album %}
+    <li><a href="/playlists/{{playlist.id}}">{{playlist.name}}</a></li>
+    {% endfor %}
+  </ul>
 </ul>
 
 {% endblock %}

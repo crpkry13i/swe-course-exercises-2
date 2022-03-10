@@ -64,12 +64,14 @@ def add_playlist():
     if form.validate_on_submit():
         # Checks if POST request AND is CSRF token valid
         # Add the playlist to the database
-        playlist = Playlist(name=form.name.data,
-                            description=form.description.data)
-        db.session.add(playlist)
+        name = form.name.data
+        description = form.description.data
+        new_playlist = Playlist(name=name, description=description)
+        db.session.add(new_playlist)
         db.session.commit()
         flash(f"{playlist.name} added!")
         return redirect("/playlists")
+
     return render_template("new_playlist.html", form=form)
 
 
@@ -107,12 +109,14 @@ def add_song():
     if form.validate_on_submit():
         # Checks if POST request AND is CSRF token valid
         # Add the playlist to the database
-        song = Song(title=form.title.data,
-                    artist=form.artist.data)
+        title = form.title.data
+        artist = form.artist.data
+        song = Song(title=title, artist=artist)
         db.session.add(song)
         db.session.commit()
         flash(f"{song.title} added!")
         return redirect("/songs")
+
     return render_template("new_song.html", form=form)
 
 
@@ -128,13 +132,19 @@ def add_song_to_playlist(playlist_id):
     form = NewSongForPlaylistForm()
 
     # Restrict form to songs not already on this playlist
+    curr_on_playlist = [s.id for s in playlist.songs]
+    form.song.choices = (db.session.query(Song.id, Song.title)
+                         .filter(Song.id.notin_(curr_on_playlist))
+                         .all())
 
-    # currently_on_playlist = ...
-    # form.song.choices = ...
+    if form.validate_on_submit():
+        playlist_song = PlaylistSong(song_id=form.song.data,
+                                     playlist_id=playlist_id)
+        db.session.add(playlist_song)
+        db.session.commit()
 
     # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
-
-    return redirect(f"/playlists/{playlist_id}")
+        return redirect(f"/playlists/{playlist_id}")
 
     return render_template("add_song_to_playlist.html",
                            playlist=playlist,
