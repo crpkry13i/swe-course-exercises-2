@@ -35,27 +35,6 @@ class User {
       throw new expressError(err);
     }
   }
-  static async getByUsername(username) {
-    try {
-      const results = await db.query(`SELECT * FROM users WHERE username=$1`, [
-        username,
-      ]);
-      if (results.rows.length === 0) {
-        throw new expressError(
-          `User with username ${username} does not exist`,
-          404
-        );
-      }
-      const user = new User(
-        results.rows[0].id,
-        results.rows[0].username,
-        results.rows[0].password
-      );
-      return user;
-    } catch (err) {
-      throw new expressError(err);
-    }
-  }
   async delete() {
     try {
       await db.query(`DELETE FROM users WHERE id=$1`, [this.id]);

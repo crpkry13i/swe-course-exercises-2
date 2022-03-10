@@ -90,6 +90,7 @@ app.get("/callback", function (req, res) {
   );
 });
 
+// Register a new user
 app.get("/register", function (req, res) {
   return res.render("register");
 });
@@ -97,17 +98,15 @@ app.get("/register", function (req, res) {
 app.post("/register", async function (req, res, next) {
   try {
     const { username, password } = req.body;
-    // if no username or password, throw error
+    // if no username or password, flash error
     if (!username || !password) {
-      // throw new ExpressError("Missing username or password", 400);
-      req.flash("error", "Missing username or password");
+      req.flash("error", "Please enter a username and password");
       res.redirect("/register");
     }
     // hash password
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
     // save to db
     const newUser = await User.register(username, hashedPassword);
-    // return res.status(201).json({ message: `User ${newUser.username} created` });
     req.flash("success", `User ${newUser.username} created and logged in`);
     req.session.user_id = newUser._id; // set session id
     return res.redirect("/recent");
@@ -127,16 +126,17 @@ app.get("/login", function (req, res) {
 app.post("/login", async function (req, res, next) {
   try {
     const { username, password } = req.body;
-    const user = await User.getByUsername(username); // get user by username
-    const userAuth = await User.authenticate(username, password); // authenticate user input against db
-    const validPassword = await bcrypt.compare(password, user.password); // compare hashed password to input
-
+    // if no username or password, flash error
     if (!username || !password) {
       req.flash("error", "Please enter a username and password");
       return res.redirect("/login");
-    } else if (userAuth && validPassword) {
-      req.flash("success", `${user.username} logged in`);
+    } else if (!(await User.authenticate(username, password))) {
+      req.flash("error", "Invalid username or password");
+      return res.redirect("/login");
+    } else {
+      const user = await User.authenticate(username, password); // authenticate user input against db
       req.session.user_id = user._id; // set session id
+      req.flash("success", `User ${user.username} logged in`);
       return res.redirect(
         // redirect to recent page
         "https://accounts.spotify.com/authorize?" +
@@ -148,9 +148,6 @@ app.post("/login", async function (req, res, next) {
             state: "",
           })
       );
-    } else {
-      req.flash("error", "Invalid username or password");
-      return res.redirect("/login");
     }
   } catch (err) {
     next(err);
@@ -164,8 +161,8 @@ app.post("/logout", function (req, res) {
 
 app.get("/recent", function (req, res) {
   // redirect to login if no token
-  if (!req.session.user_id && !spotifyApi.getAccessToken()) {
-    // flash error message if no user in session and no token then redirect to login
+  if (!req.session.user_id || !spotifyApi.getAccessToken()) {
+    // flash error message if no user in session or no token then redirect to login
     req.flash("error", "You must login first");
     return res.redirect("/login");
   } else {

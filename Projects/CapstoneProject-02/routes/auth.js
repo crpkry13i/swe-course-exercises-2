@@ -5,11 +5,15 @@ const router = express.Router();
 const ExpressError = require("../expressError");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { authenticateJWT, ensureLoggedIn } = require("../middleware/auth");
 const { BCRYPT_WORK_FACTOR, redirect_uri, state, scope } = require("../config");
 const User = require("../models/User");
 const { client_id } = require("../secret");
 const querystring = require("querystring");
+const {
+  authenticateJWT,
+  ensureLoggedIn,
+  requireLogin,
+} = require("../middleware/auth");
 
 router.get("/", (req, res, next) => {
   res.send("Welcome to the auth route");
