@@ -3,7 +3,7 @@
   <%= errors %> 
   <h1 style='text-align: center;'>Login</h1>
   <div class="container">
-    <form action="/auth/login" method="POST">
+    <form action="/login" method="POST">
       <div class="form-group">
         <label for="username">Username</label>
         <input type="text" class="form-control" id="username" name="username" placeholder="Username">
@@ -14,4 +14,7 @@
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <a href="/register">Register</a>
+  </div>
+  <script src="/app.js"></script>
 <%- include('partials/footer') %> 

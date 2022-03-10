@@ -1,3 +1,5 @@
+// NOT BEING USED
+
 const express = require("express");
 const router = express.Router();
 const ExpressError = require("../expressError");
@@ -13,54 +15,53 @@ router.get("/", (req, res, next) => {
   res.send("Welcome to the auth route");
 });
 
-router.post("/register", async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-    // if no username or password, throw error
-    if (!username || !password) {
-      throw new ExpressError("Missing username or password", 400);
-    }
-    // hash password
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
-    // save to db
-    const newUser = await User.register(username, hashedPassword);
-    // send back user
-    return res
-      .status(201)
-      .json({ message: `User ${newUser.username} created` });
-  } catch (err) {
-    if (err.code === "23505") {
-      return next(new ExpressError("Username already exists", 400));
-    }
-    return next(err);
-  }
-});
+// router.post("/register", async (req, res, next) => {
+//   try {
+//     const { username, password } = req.body;
+//     // if no username or password, throw error
+//     if (!username || !password) {
+//       // throw new ExpressError("Missing username or password", 400);
+//       res.redirect("/register");
+//     }
+//     // hash password
+//     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+//     // save to db
+//     const newUser = await User.register(username, hashedPassword);
+//     // return res.status(201).json({ message: `User ${newUser.username} created` });
+//     return res.redirect("/recent");
+//   } catch (err) {
+//     if (err.code === "23505") {
+//       next(new ExpressError("Username already exists", 400));
+//     }
+//     return next(err);
+//   }
+// });
 
-router.post("/login", async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-    // if no username or password, throw error
-    if (!username || !password) {
-      throw new ExpressError("Missing username or password", 400);
-    } else {
-      // authenticate user
-      const user = await User.authenticate(username, password);
-      //res.json({ message: `${user.username} logged in` });
-      res.redirect(
-        "https://accounts.spotify.com/authorize?" +
-          querystring.stringify({
-            response_type: "code",
-            client_id: client_id,
-            scope: scope,
-            redirect_uri: redirect_uri,
-            state: state,
-          })
-      );
-    }
-  } catch (err) {
-    return next(err);
-  }
-});
+// router.post("/login", async (req, res, next) => {
+//   try {
+//     const { username, password } = req.body;
+//     if (!username || !password) {
+//       // throw new ExpressError("Missing username or password", 400);
+//       res.redirect("/login");
+//     } else {
+//       // authenticate user input against db
+//       const user = await User.authenticate(username, password);
+//       //res.json({ message: `${user.username} logged in` });
+//       res.redirect(
+//         "https://accounts.spotify.com/authorize?" +
+//           querystring.stringify({
+//             response_type: "code",
+//             client_id: client_id,
+//             scope: scope,
+//             redirect_uri: redirect_uri,
+//             state: state,
+//           })
+//       );
+//     }
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
 
 // PRACTICE ROUTES
 

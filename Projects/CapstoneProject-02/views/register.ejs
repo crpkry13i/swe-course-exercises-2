@@ -2,7 +2,7 @@
 <body>
   <h1 style='text-align: center;'>Register</h1>
   <div class="container">
-    <form action="auth/register" method="POST">
+    <form action="/register" method="POST">
       <div class="form-group">
         <label for="username">Username</label>
         <input type="text" class="form-control" id="username" name="username" placeholder="Username">
@@ -13,6 +13,7 @@
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <a href="/login">Login</a>
   </div>
   <script src="/app.js"></script>
 <%- include('partials/footer') %> 

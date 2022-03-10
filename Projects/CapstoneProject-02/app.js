@@ -2,18 +2,25 @@ const express = require("express");
 const app = express();
 const session = require("express-session");
 const flash = require("connect-flash");
+const bcrypt = require("bcrypt");
+const morgan = require("morgan");
 const ExpressError = require("./expressError");
-const { authenticateJWT, ensureLoggedIn } = require("./middleware/auth");
 const path = require("path");
 const { client_id, client_secret } = require("./secret");
-const { redirect_uri } = require("./config");
+const { redirect_uri, scope, BCRYPT_WORK_FACTOR } = require("./config");
 const SpotifyWebApi = require("spotify-web-api-node");
+const querystring = require("querystring");
+const User = require("./models/User");
+const { user } = require("pg/lib/defaults");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: "secret", resave: false, saveUninitialized: false }));
 app.use(flash());
 // app.use(authenticateJWT);
+
+// HTTP request logger middleware
+app.use(morgan("dev"));
 
 // flash messages middleware
 app.use((req, res, next) => {
@@ -27,11 +34,9 @@ app.use((req, res, next) => {
 app.use("/users", require("./routes/users"));
 app.use("/auth", require("./routes/auth"));
 
-// 404 handler
+// // 404 handler
 // app.use(function (req, res, next) {
-//   const err = new ExpressError("Not Found", 404);
-
-//   // pass err to next middleware
+//   const err = new ExpressError("NOT FOUND", 404);
 //   return next(err);
 // });
 
@@ -39,7 +44,6 @@ app.use("/auth", require("./routes/auth"));
 app.use(function (err, req, res, next) {
   // the default status is 500 Internal Server Error
   let status = err.status || 500;
-
   // set the status and alert the user
   return res.status(status).json({
     error: {
@@ -52,24 +56,15 @@ app.use(function (err, req, res, next) {
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
-app.get("/", (req, res) => {
-  res.send("APP IS RUNNING");
-});
-
-// Request User Authorization
-app.get("/login", function (req, res) {
-  return res.render("login");
-});
-
-app.get("/register", function (req, res) {
-  return res.render("register");
-});
-
 // credentials are optional
 let spotifyApi = new SpotifyWebApi({
   clientId: client_id,
   clientSecret: client_secret,
   redirectUri: redirect_uri,
+});
+
+app.get("/", (req, res) => {
+  return res.render("login");
 });
 
 // Request Access Token
@@ -86,7 +81,7 @@ app.get("/callback", function (req, res) {
       // Set the access token on the API object to use it in later calls
       spotifyApi.setAccessToken(data.body["access_token"]);
       spotifyApi.setRefreshToken(data.body["refresh_token"]);
-      req.flash("success", `Successfully logged in!`);
+
       return res.redirect("/recent");
     },
     function (err) {
@@ -95,9 +90,82 @@ app.get("/callback", function (req, res) {
   );
 });
 
+app.get("/register", function (req, res) {
+  return res.render("register");
+});
+
+app.post("/register", async function (req, res, next) {
+  try {
+    const { username, password } = req.body;
+    // if no username or password, throw error
+    if (!username || !password) {
+      // throw new ExpressError("Missing username or password", 400);
+      req.flash("error", "Missing username or password");
+      res.redirect("/register");
+    }
+    // hash password
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    // save to db
+    const newUser = await User.register(username, hashedPassword);
+    // return res.status(201).json({ message: `User ${newUser.username} created` });
+    req.flash("success", `User ${newUser.username} created and logged in`);
+    req.session.user_id = newUser._id; // set session id
+    return res.redirect("/recent");
+  } catch (err) {
+    if (err.code === "23505") {
+      next(new ExpressError("Username already exists", 400));
+    }
+    return next(err);
+  }
+});
+
+// Request User Authorization
+app.get("/login", function (req, res) {
+  return res.render("login");
+});
+
+app.post("/login", async function (req, res, next) {
+  try {
+    const { username, password } = req.body;
+    const user = await User.getByUsername(username); // get user by username
+    const userAuth = await User.authenticate(username, password); // authenticate user input against db
+    const validPassword = await bcrypt.compare(password, user.password); // compare hashed password to input
+
+    if (!username || !password) {
+      req.flash("error", "Please enter a username and password");
+      return res.redirect("/login");
+    } else if (userAuth && validPassword) {
+      req.flash("success", `${user.username} logged in`);
+      req.session.user_id = user._id; // set session id
+      return res.redirect(
+        // redirect to recent page
+        "https://accounts.spotify.com/authorize?" +
+          querystring.stringify({
+            response_type: "code",
+            client_id: client_id,
+            scope: scope,
+            redirect_uri: redirect_uri,
+            state: "",
+          })
+      );
+    } else {
+      req.flash("error", "Invalid username or password");
+      return res.redirect("/login");
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/logout", function (req, res) {
+  req.session.user_id = null;
+  res.redirect("/login");
+});
+
 app.get("/recent", function (req, res) {
   // redirect to login if no token
-  if (!spotifyApi.getAccessToken()) {
+  if (!req.session.user_id && !spotifyApi.getAccessToken()) {
+    // flash error message if no user in session and no token then redirect to login
     req.flash("error", "You must login first");
     return res.redirect("/login");
   } else {

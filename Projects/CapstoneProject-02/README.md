@@ -15,7 +15,7 @@ Once user has logged in, they will be able to see their recently played tracks.
 To get the current user's recently played tracks, make a GET request to the following URL:
 `http://localhost:8888/recent`
 
-TODO: User Database, Authentication, Authorization and Login. Create User Register/Login front-end.
+TODO: Fix the following errors: `Registering with duplicate name`, `Invalid password for user`
 
 ## [Spotify](https://open.spotify.com)
 
