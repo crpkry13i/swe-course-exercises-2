@@ -1,0 +1,1 @@
+<html><head><meta http-equiv="refresh" content="0;url=http://dnserrorassist.att.net/search/?q=http://foozlemcblargh.com%2F&t=0&bc="/></head><body><script type="text/javascript">window.location="http://dnserrorassist.att.net/search/?q="+escape(window.location)+"&r="+escape(document.referrer)+"&t=0&bc=";</script></body></html>

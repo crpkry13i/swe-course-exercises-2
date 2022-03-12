@@ -8,14 +8,15 @@ process.on("exit", function (code) {
   console.log("Exiting with code:", code);
 });
 
-console.log(`GET request to ${url}`);
+console.log(`Wrote to ${url}`);
 
 for (let i = 0; i < argv.length; i++) {
   if (argv[2] === "url") {
     for (let i = 0; i < urlArr.length; i++) {
       axios.get(urlArr[i]).then(async function (response) {
         const data = await response.data;
-        fs.writeFileSync(`${i}.html`, data);
+        const name = urlArr[i].split("/").slice(2, 3);
+        fs.writeFileSync(`${name}`, data);
       });
     }
   } else if (argv[2] !== "url") {
