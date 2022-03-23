@@ -1,0 +1,29 @@
+.AddColorForm {
+	width: 65%;
+	margin: 0 auto;
+}
+
+h1 {
+	font-family: fantasy;
+}
+
+.AddColorForm label {
+	vertical-align: middle;
+	display: inline-block;
+}
+
+.AddColorForm input {
+	width: 200px;
+	margin: 1em;
+	padding: 0.4em;
+	border-radius: 4px;
+	border: gray 1px solid;
+}
+
+.AddColorForm button {
+	padding: 0.5em 2em;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	cursor: pointer;
+	display: block;
+	margin: 1em auto;
+}

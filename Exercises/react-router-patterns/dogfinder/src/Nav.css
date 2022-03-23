@@ -1,0 +1,22 @@
+.Nav {
+	background-color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 1.4em;
+}
+
+.Nav a {
+	margin: auto;
+	font-weight: bold;
+	color: white;
+	text-decoration: none;
+}
+
+.Nav a.active {
+	color: teal;
+}
+
+.Nav a:hover {
+	color: grey;
+}

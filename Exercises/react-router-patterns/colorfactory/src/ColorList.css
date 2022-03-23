@@ -1,0 +1,32 @@
+.ColorList {
+	padding: 1em;
+	background-color: rgb(100, 100, 100);
+	color: rgb(209, 209, 209);
+	font-family: fantasy;
+}
+
+.ColorList a {
+	text-decoration: none;
+	color: rgb(209, 209, 209);
+	font-size: 1.2em;
+}
+
+.ColorList a:hover {
+	color: white;
+}
+
+p {
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+ul {
+	list-style: none;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	padding: 0;
+}
+
+li a {
+	margin: 0.2em auto;
+	padding: 0;
+	text-decoration: none;
+}
