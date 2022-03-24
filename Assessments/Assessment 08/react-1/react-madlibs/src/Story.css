@@ -1,0 +1,11 @@
+.Story button {
+	padding: 0.5em 1.5em;
+	cursor: pointer;
+	border-radius: 4px;
+	border: gray solid 1px;
+}
+
+button:hover {
+	background-color: gray;
+	color: white;
+}
