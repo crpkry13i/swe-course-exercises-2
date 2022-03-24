@@ -1,0 +1,29 @@
+.MenuForm {
+	display: flex;
+	flex-direction: column;
+	padding: 0.75em;
+	background-color: #101010ec;
+	color: #f0f2f5;
+	border: 20px solid rgba(16, 16, 16, 0.63);
+	box-sizing: border-box;
+}
+
+.MenuForm label {
+	margin-top: 1em;
+}
+
+.MenuForm button {
+	margin: 1em 0 0.5em;
+	align-self: flex-end;
+	padding: 0.3em 1em;
+	border-radius: 10px;
+	background-color: rgba(255, 255, 255);
+	color: black;
+	/* background-color: rgba(53, 53, 53, 0.63);
+	color: #ffffff; */
+}
+
+.MenuForm button:hover {
+	background-color: rgba(16, 16, 16, 0.63);
+	color: #ffffff;
+}
